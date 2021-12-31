@@ -119,7 +119,7 @@ if __name__ == '__main__':
                  {'name': 'order_street_name', 'type': 'STRING', 'mode': 'Nullable'},
                  {'name': 'order_city', 'type': 'STRING', 'mode': 'Nullable'},
                  {'name': 'order_state', 'type': 'STRING', 'mode': 'Nullable'},
-                 {'name': 'order_zipcode', 'type': 'INTEGER', 'mode': 'Nullable'},
+                 {'name': 'order_zipcode', 'type': 'STRING', 'mode': 'Nullable'},
              ],},
             {'name': 'customer_first_name', 'type': 'STRING', 'mode': 'Nullable'},
             {'name': 'customer_last_name', 'type': 'STRING', 'mode': 'Nullable'},
@@ -168,29 +168,29 @@ if __name__ == '__main__':
         ## order details
         order_detail_info = blackfriday_orders_original | beam.ParDo(order_details())
 
-        USD_orders = usd_blackfriday_orders | "finalizing_USD" >> beam.ParDo(filter_columns())
+        USD_orders = usd_blackfriday_orders | "finalizing_USD" >> beam.ParDo(filter_columns()) | beam.Map(print)
         EUR_orders = eur_blackfriday_orders | "inalizing_EUR" >> beam.ParDo(filter_columns())
         GBP_orders = gbp_blackfriday_orders | "inalizing_GBP" >> beam.ParDo(filter_columns())
 
-        USD_orders | "Write-USD" >> beam.io.WriteToBigQuery(
-            table_spec1,
-            schema=table_schema,
-            #write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE,
-            create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
-
-
-        EUR_orders | "Write-EUR" >> beam.io.WriteToBigQuery(
-            table_spec2,
-            schema=table_schema,
-            #write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE,
-            create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
-
-
-        GBP_orders | "Write-GBP" >> beam.io.WriteToBigQuery(
-            table_spec3,
-            schema=table_schema,
-            #write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE,
-            create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+        # USD_orders | "Write-USD" >> beam.io.WriteToBigQuery(
+        #     table_spec1,
+        #     schema=table_schema,
+        #     #write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE,
+        #     create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+        #
+        #
+        # EUR_orders | "Write-EUR" >> beam.io.WriteToBigQuery(
+        #     table_spec2,
+        #     schema=table_schema,
+        #     #write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE,
+        #     create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+        #
+        #
+        # GBP_orders | "Write-GBP" >> beam.io.WriteToBigQuery(
+        #     table_spec3,
+        #     schema=table_schema,
+        #     #write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE,
+        #     create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
 
     while True:
